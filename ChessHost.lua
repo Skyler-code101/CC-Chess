@@ -622,10 +622,19 @@ function b()
                 local eventt, sidet, xt, yt
                 repeat
                     eventt, sidet, xt, yt = os.pullEvent("monitor_touch")
-                until xt <=18 and yt <=18
+                until xt <=8 and yt <=8
                     print("Monitor Touched At (" .. xt .. ", " .. yt .. ")")
                     for indexl, valuel in pairs(pieceLayout) do
                         if valuel.x == xt and valuel.y == yt then
+                            if value.x == xt and value.y == yt then
+                                selectedpiece = ""
+                                break
+                            end
+                            if valuel.color == playersturn then
+                                selectedpiece = ""
+                                break
+                            end
+
                             valuel.x = value.x
                             valuel.y = value.y
                             value.x = xt
