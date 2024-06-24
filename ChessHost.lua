@@ -513,6 +513,7 @@ local pieceLayout = {}
 print(textutils.serialize(pieceLayout))
 local speaker = peripheral.find("speaker")
 local playersturn = "W"
+local selectedpiece = ""
 function a()
     --display
     while true do
@@ -537,6 +538,9 @@ function a()
                 elseif value.color == "B" then
                     monitor.setTextColor(colors.black)
                 end
+                if selectedpiece == index then
+                    monitor.setTextColor(colors.purple)
+                end
                 monitor.setCursorPos(value.x,value.y)
                 monitor.write("P")
             elseif value.pieceName == "rook" then
@@ -544,6 +548,9 @@ function a()
                     monitor.setTextColor(colors.lightGray)
                 elseif value.color == "B" then
                     monitor.setTextColor(colors.black)
+                end
+                if selectedpiece == index then
+                    monitor.setTextColor(colors.purple)
                 end
                 monitor.setCursorPos(value.x,value.y)
                 monitor.write("R")
@@ -553,6 +560,9 @@ function a()
                 elseif value.color == "B" then
                     monitor.setTextColor(colors.black)
                 end
+                if selectedpiece == index then
+                    monitor.setTextColor(colors.purple)
+                end
                 monitor.setCursorPos(value.x,value.y)
                 monitor.write("N")
             elseif value.pieceName == "bishop" then
@@ -560,6 +570,9 @@ function a()
                     monitor.setTextColor(colors.lightGray)
                 elseif value.color == "B" then
                     monitor.setTextColor(colors.black)
+                end
+                if selectedpiece == index then
+                    monitor.setTextColor(colors.purple)
                 end
                 monitor.setCursorPos(value.x,value.y)
                 monitor.write("B")
@@ -569,6 +582,9 @@ function a()
                 elseif value.color == "B" then
                     monitor.setTextColor(colors.black)
                 end
+                if selectedpiece == index then
+                    monitor.setTextColor(colors.purple)
+                end
                 monitor.setCursorPos(value.x,value.y)
                 monitor.write("Q")
             elseif value.pieceName == "king" then
@@ -576,6 +592,9 @@ function a()
                     monitor.setTextColor(colors.lightGray)
                 elseif value.color == "B" then
                     monitor.setTextColor(colors.black)
+                end
+                if selectedpiece == index then
+                    monitor.setTextColor(colors.purple)
                 end
                 monitor.setCursorPos(value.x,value.y)
                 monitor.write("K")
@@ -586,7 +605,7 @@ function a()
             end
         end
         
-        sleep(1)
+        sleep(.1)
     end
 end
 
@@ -599,6 +618,7 @@ function b()
         if value.color == playersturn then
             if value.x == x and value.y == y then
                 print("Piece Interacted : "..value.pieceName..", "..value.color..", "..value.init)
+                selectedpiece = index
                 local eventt, sidet, xt, yt
                 repeat
                     eventt, sidet, xt, yt = os.pullEvent("monitor_touch")
@@ -617,6 +637,7 @@ function b()
                                     speaker.playSound("entity.generic.explode",.5)
                                 end
                             end
+                            selectedpiece = ""
                             if playersturn == "W" then
                                 playersturn = "B"
                                 print("Black's Turn")
@@ -635,28 +656,5 @@ function b()
     end
 end    
 
-function c()
-    
-    --sending
-    while true do
-        local data = {}
-        data.relay = "PiecesPos"
-        data.info = pieceLayout
-        rednet.broadcast(data,"chess")
-        sleep(.1)
-    end
-    
-end
-function d()
-    while true do
-        local event, key, is_held = os.pullEvent("key")
-        if key == keys.space then
-            local data = {}
-            data.color = playersturn
-            data.relay = "turn"
-            rednet.broadcast(data,"chess")
-        end
-    end
-end
-parallel.waitForAll(a,b,c)
+parallel.waitForAll(a,b)
 
